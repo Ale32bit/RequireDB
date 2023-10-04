@@ -1,17 +1,27 @@
 local fullModulePattern = "^@([%w-]+):([%w%.-]+)$"
-local modulePattern = "^@([%w-]+)$"
-local defaultDirectory = ".requiredb"
+local modulePattern     = "^@([%w-]+)$"
+local defaultDirectory  = ".requiredb"
 local defaultRepository = "https://requiredb.alexdevs.me"
 
-local expect = require("cc.expect").expect
+local expect            = require("cc.expect").expect
+local sha256
 
-local function contains(arr, value)
-    for k, v in ipairs(arr) do
-        if v == value then
-            return true
+-- REQUIREDB --
+
+local function findVersion(version, versions)
+    if version == "latest" then
+        return versions[#versions]
+    end
+    for k, v in ipairs(versions) do
+        if type(v) == "string" then
+            return v
+        elseif type(v) == "table" then
+            if v.version == version then
+                return v
+            end
         end
     end
-    return false
+    return nil
 end
 
 local function init(options)
@@ -51,21 +61,39 @@ local function init(options)
             local index = textutils.unserialiseJSON(h.readAll())
             h.close()
 
-            local versions = index.versions
-            if version == "latest" then
-                version = versions[#versions]
-            end
-            if not contains(versions, version) then
+            local versionInfo = findVersion(version, index.versions)
+            if not versionInfo then
                 return nil, "version " .. version .. " not found"
             end
 
-            local h, err = http.get(("%s/packages/%s/versions/%s.lua"):format(repository, name, version))
-            if not h then
-                return nil, err
-            end
+            if type(versionInfo) == "string" then
+                local h, err = http.get(("%s/packages/%s/versions/%s.lua"):format(repository, name, version))
+                if not h then
+                    return nil, err
+                end
 
-            content = h.readAll()
-            h.close()
+                content = h.readAll()
+                h.close()
+            else
+                if type(versionInfo.upstream) ~= "string" or type(versionInfo.hash) ~= "string" then
+                    return nil, "invalid package version info"
+                end
+
+                local h, err = http.get(versionInfo.upstream)
+                if not h then
+                    return nil, err
+                end
+
+                sha256 = sha256 or require("sha256")
+
+                content = h.readAll()
+                h.close()
+
+                local upstreamDigest = sha256.digest(content):toHex()
+                if versionInfo.hash:lower() ~= upstreamDigest then
+                    return nil, "hash mismatch, expected " .. versionInfo.hash:lower() .. ", got " .. upstreamDigest
+                end
+            end
 
             if useCache then
                 local f = fs.open(libpath, "w")
@@ -86,6 +114,7 @@ local function init(options)
 
     local rdb = {}
     function rdb.getInfo(name)
+        expect(1, name, "string")
         local h, err = http.get(("%s/packages/%s/index.json"):format(repository, name))
         if not h then
             return nil, err

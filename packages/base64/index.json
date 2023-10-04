@@ -1,0 +1,10 @@
+{
+    "name": "base64",
+    "authors": [
+        "Ilya Kolbin (iskolbin)"
+    ],
+    "license": "MIT License; Public domain",
+    "versions": [
+        "v1.5.3"
+    ]
+}

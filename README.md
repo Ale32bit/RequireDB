@@ -12,11 +12,11 @@ Repository of libraries for ComputerCraft
 
     `wget https://pastebin.com/raw/6UV4qfNF sha256.lua`
 
-### Bundle
+    ### Bundle
 
-You can also download the RequireDB + SHA256 bundle:
+    You can also download the RequireDB + SHA256 bundle:
 
-`wget https://raw.github.com/Ale32bit/RequireDB/main/requiredb.bundle.lua requiredb.lua`
+    `wget https://raw.github.com/Ale32bit/RequireDB/main/requiredb.bundle.lua requiredb.lua`
 
 3. Require the library to enable the functionality and then require the libraries you need by prepending the name with `@`. Additionally you can append the version after `:`. (i.e. `@example:0.0.1`)
    

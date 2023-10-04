@@ -83,6 +83,29 @@ local function init(options)
     end
 
     table.insert(package.loaders, from_libdb)
+
+    local rdb = {}
+    function rdb.getInfo(name)
+        local h, err = http.get(("%s/packages/%s/index.json"):format(repository, name))
+        if not h then
+            return nil, err
+        end
+
+        local index = textutils.unserialiseJSON(h.readAll())
+        h.close()
+
+        if index.license == "custom" then
+            local h, err = http.get(("%s/packages/%s/LICENSE"):format(repository, name))
+            if h then
+                index.license = h.readAll()
+                h.close()
+            end
+        end
+
+        return index
+    end
+
+    return rdb
 end
 
 return init

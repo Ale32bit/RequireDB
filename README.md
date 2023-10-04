@@ -89,7 +89,20 @@ requireDb.getInfo(name: string): table
         // Versions available to download.
         // The last item is used as "latest" version.
         "versions": [
-            "1.0.0"
+
+            // Strings refer to files in the repository
+            "1.0.0", 
+
+            // Objects refer to files outside of repository
+            { 
+                "version": "1.0.1",
+
+                // URL of the library code
+                "upstream": "https://pastebin.com/raw/6UV4qfNF", 
+                
+                // SHA-256 hash of the file. This has to match with whatever SHA256 digets in CC.
+                "hash": "086937fedfb9da1a0fc66164f189c5cd245f91be0b723b31cb384c6064b43470",
+            },
         ]
 
         // Other fields can be included, such as "website".

@@ -61,7 +61,7 @@ requireDb.getInfo(name: string): table
 
     Fill the file content with this template. Remember to remove comments.
 
-    ```json
+    ```jsonc
     {
         // Pretty name of the library
         "name": "My Library",

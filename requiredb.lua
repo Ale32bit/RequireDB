@@ -84,7 +84,7 @@ local function init(options)
                     return nil, err
                 end
 
-                sha256 = sha256 or require("sha256")
+                sha256 = sha256 or require("@sha256")
 
                 content = h.readAll()
                 h.close()

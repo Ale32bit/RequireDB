@@ -1,0 +1,10 @@
+{
+    "name": "SHA256/HMAC/PBKDF2",
+    "authors": [
+        "Anavrins"
+    ],
+    "license": "MIT License",
+    "versions": [
+        "nov.13.2021"
+    ]
+}

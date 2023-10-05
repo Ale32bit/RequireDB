@@ -67,7 +67,7 @@ local function init(options)
             end
 
             if type(versionInfo) == "string" then
-                local h, err = http.get(("%s/packages/%s/versions/%s.lua"):format(repository, name, version))
+                local h, err = http.get(("%s/packages/%s/versions/%s.lua"):format(repository, name, versionInfo))
                 if not h then
                     return nil, err
                 end
